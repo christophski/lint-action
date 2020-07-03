@@ -69,10 +69,12 @@ class Flake8 {
 		const matches = output.stdout.matchAll(PARSE_REGEX);
 		for (const match of matches) {
 			const [_, pathFull, line, rule, text] = match;
-			const path = pathFull.substring(2); // Remove "./" or ".\" from start of path
+			if (pathFull.startsWith('./') || pathFull.startsWith('.\\')) {
+				pathFull = pathFull.substring(2); // Remove "./" or ".\" from start of path
+			}
 			const lineNr = parseInt(line, 10);
 			lintResult.error.push({
-				path,
+				pathFull,
 				firstLine: lineNr,
 				lastLine: lineNr,
 				message: `${capitalizeFirstLetter(text)} (${rule})`,
